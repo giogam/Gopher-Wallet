@@ -13,8 +13,8 @@ go:
 
 # install step. `go get` dependencies.
 install: 
-go get golang.org/x/crypto/pbkdf2
-go get github.com/stretchr/testify/assert
+  - go get golang.org/x/crypto/pbkdf2
+  - go get github.com/stretchr/testify/assert
 
 matrix:
   # It's ok if our code fails on unstable development versions of Go.
