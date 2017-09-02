@@ -14,7 +14,7 @@ type test struct {
 	seed     string
 }
 
-func ENtestVector() []test {
+func testVectorEN() []test {
 	return []test{
 		test{
 			entropy:  "00000000000000000000000000000000",
@@ -140,7 +140,7 @@ func ENtestVector() []test {
 }
 
 func TestBip39En(t *testing.T) {
-	for _, test := range ENtestVector() {
+	for _, test := range testVectorEN() {
 		entropy, err := hex.DecodeString(test.entropy)
 		assert.NoError(t, err)
 

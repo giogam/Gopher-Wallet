@@ -8,7 +8,6 @@ import (
 	"math/big"
 	"strings"
 
-	"github.com/mrbuzz/bitcoin-go/wallet/mnemonic/dict"
 	"golang.org/x/crypto/pbkdf2"
 )
 
@@ -41,7 +40,7 @@ func NewEntropy(bitLen uint) []byte {
 
 // NewWordlist generates new entropy
 func NewWordlist(language string) []string {
-	return strings.Split(dict.EnglishWords, "\n")
+	return strings.Split(EnglishWords, "\n")
 }
 
 // NewMnemonic generates new mnemonic
