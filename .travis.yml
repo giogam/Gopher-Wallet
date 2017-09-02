@@ -11,9 +11,10 @@ go:
   - 1.8
   - tip 
 
-# Skip the install step. Don't `go get` dependencies. Only build with the
-# code in vendor/
-install: true
+# install step. `go get` dependencies.
+install: 
+go get golang.org/x/crypto/pbkdf2
+go get github.com/stretchr/testify/assert
 
 matrix:
   # It's ok if our code fails on unstable development versions of Go.
