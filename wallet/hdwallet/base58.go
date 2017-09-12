@@ -1,21 +1,26 @@
 package hdwallet
 
-const b58alphabet = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+import (
+	"math"
+	"strings"
+)
 
-// Encode encodes the given slice of data in Base58
-// returns the encoded bytes and a string representation of them
-func Encode(data []byte) (string, []byte) {
+const (
+	b58alphabet         = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz"
+	log256      float64 = 5.54
+	log58       float64 = 4.06
+)
+
+func encode(data []byte) (string, []byte) {
 
 	dataSz := len(data)
 	i, j, high, carry, zCount := 0, 0, 0, 0, 0
 
-	// Count zero bytes
 	for zCount < dataSz && data[zCount] == 0 {
 		zCount++
 	}
 
-	size := (dataSz-zCount)*138/100 + 1
-
+	size := int(math.Ceil(float64(dataSz-zCount) * log256 / log58))
 	buff := make([]byte, size)
 
 	for i, j, high = zCount, 0, size-1; i < dataSz; i, high = i+1, j {
@@ -28,24 +33,60 @@ func Encode(data []byte) (string, []byte) {
 		}
 	}
 
-	j = 0
-	for j < size && buff[j] == 0 {
-		j++
+	for j = 0; j < size && buff[j] == 0; j++ {
 	}
 
 	b58 := make([]byte, (size-j)+zCount)
 
 	if zCount != 0 {
-
 		for i := 0; i < zCount; i++ {
 			b58[i] = '1'
 		}
 	}
-	for i := zCount; j < size; i++ {
+
+	for i := zCount; j < size; i, j = i+1, j+1 {
 		b58[i] = b58alphabet[buff[j]]
-		j++
 	}
 
 	return string(b58), b58
+}
 
+func decode(str string) (string, []byte) {
+
+	strSz := len(str)
+	i, j, high, carry, zCount := 0, 0, 0, 0, 0
+
+	for zCount < strSz && str[zCount] == '1' {
+		zCount++
+	}
+
+	size := int(math.Ceil(float64(strSz-zCount) * log58 / log256))
+	buff := make([]byte, size)
+
+	for i, j, high = zCount, 0, size-1; i < strSz; i, high = i+1, j {
+
+		for carry, j = strings.Index(b58alphabet, string(str[i])), size-1; j > high || carry != 0; j-- {
+
+			carry += 58 * int(buff[j])
+			buff[j] = byte(carry % 256)
+			carry /= 256
+		}
+	}
+
+	for j = 0; j < size && buff[j] == 0; j++ {
+	}
+
+	b256 := make([]byte, (size-j)+zCount)
+
+	if zCount != 0 {
+		for i := 0; i < zCount; i++ {
+			b256[i] = byte(0)
+		}
+	}
+
+	for i := zCount; j < size; i, j = i+1, j+1 {
+		b256[i] = buff[j]
+	}
+
+	return string(b256), b256
 }
