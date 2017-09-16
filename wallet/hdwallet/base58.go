@@ -1,6 +1,7 @@
 package hdwallet
 
 import (
+	"crypto/sha256"
 	"math"
 	"strings"
 )
@@ -89,4 +90,24 @@ func decode(str string) (string, []byte) {
 	}
 
 	return string(b256), b256
+}
+
+// B58CheckEncode encodes data in Base58Check format
+func B58CheckEncode(version int, data []byte) (string, []byte) {
+
+	data = append([]byte{byte(version)}, data...)
+	hash := sha256.Sum256(data)
+	hash = sha256.Sum256(hash[:])
+
+	return encode(append(data, hash[:4]...))
+}
+
+// B58CheckDecode decodes data encoded in Base58Check format
+func B58CheckDecode(data string) (int, []byte, []byte) {
+
+	_, encoded := decode(data)
+
+	return int(encoded[0]),
+		encoded[1 : len(encoded)-4],
+		encoded[len(encoded)-4:]
 }
