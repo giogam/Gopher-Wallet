@@ -1,3 +1,3 @@
-[![Build Status](https://travis-ci.org/mrbuzz/bitcoin-go.svg?branch=master)](https://travis-ci.org/mrbuzz/bitcoin-go)
+[![Build Status](https://travis-ci.org/mrbuzz/bitcoin-go.svg?branch=master)](https://travis-ci.org/mrbuzz/Gopher-Wallet)
 
-# bitcoin-go
+# Gopher-Wallet
